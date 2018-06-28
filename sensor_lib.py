@@ -7,8 +7,10 @@ Russell Jeffery
 '''
 
 import RPi.GPIO as GPIO
-from time import sleep
+from time import sleep, time
+from os import system
 import serial
+import smbus
 
 def buzzer(buzzer):
     '''
@@ -43,4 +45,87 @@ def read_serial(ser):
     return line
 
 
-   
+class GPS():
+    def __init__(self, port='/dev/ttyS0'):
+        self.ser = serial.Serial(port) # Or whatever port the GPS is on.
+
+
+    def get(self):
+        '''
+        Get a line of GPS data.
+        '''
+        # Search for $GPGGA sentences only.
+        got_it = False
+        while not got_it:
+            line = self.ser.readline()
+            line = str(line)
+            if line[5:8] == 'GGA':
+                got_it = True
+        
+        return line
+
+
+    def write(self):
+        '''
+        Write data to a file.
+        '''
+
+
+
+class MPL3115A2():
+    def __init__(self, port=1, device='0x60'):
+        # To: the MPL3115A2.
+        self.dev = int(device, 16)
+
+        # Connects to i2c-1 by default.
+        self.bus = smbus.SMBus(port)
+
+        # Configure the chip.
+        reg = int('0x26', 16) # Address control register 1.
+        cmd = int('0x80', 16) # Set to altimeter mode.
+        self.bus.write_byte_data(self.dev, reg, cmd)
+
+
+    def get(self):
+        '''
+        Get one sample of altitude data.
+        '''
+        reg = int('0x26', 16) # Address control register 1.
+        cmd = int('0x82', 16) # Initiate one-shot measurement.
+        self.bus.write_byte_data(self.dev, reg, cmd)
+
+        # Get altitude data from the chip.
+        reg = int('0x1', 16)
+        byte1 = self.bus.read_byte_data(self.dev, reg)
+        reg = int('0x2', 16)
+        byte2 = self.bus.read_byte_data(self.dev, reg)
+        reg = int('0x3', 16)
+        byte3 = self.bus.read_byte_data(self.dev, reg)
+
+        # Adjust magnitudes.
+        num1 = byte1 << 8
+        num2 = byte2
+        num3 = byte3 >> 4 # The four LSBs of this register are not used.
+
+        # Convert integer to decimal.
+        while num3 >= 1:
+            num3 = num3 / 10
+
+        # Combine parts.
+        num = num1 + num2 + num3
+
+        # Two's comp. Invert if necessary.
+        if num >= 32768:
+            num = num - 65536
+
+        return num # This number should be altitude in meters.
+
+
+    def write(self):
+        '''
+        Save an altitude reading to a file.
+        '''
+
+
+
+
