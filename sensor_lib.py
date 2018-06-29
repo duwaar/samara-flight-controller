@@ -8,9 +8,11 @@ Russell Jeffery
 
 import RPi.GPIO as GPIO
 from time import sleep, time
-from os import system
+from os import system, popen
 import serial
 import smbus
+
+
 
 def buzzer(buzzer):
     '''
@@ -49,6 +51,10 @@ class GPS():
     def __init__(self, port='/dev/ttyS0'):
         self.ser = serial.Serial(port) # Or whatever port the GPS is on.
 
+        # Open a data file.
+        filename = "position_" + str(time()) + ".txt"
+        self.file = open(filename, mode='x')
+
 
     def get(self):
         '''
@@ -65,16 +71,26 @@ class GPS():
         return line
 
 
-    def write(self):
+    def save(self):
         '''
         Write data to a file.
         '''
+        data = self.get()
+        line = str(time()) + ',' + str(data) + '\n'
+        self.file.write(line)
 
 
+    def stop(self):
+        '''
+        Gracefully end the processes.
+        '''
+        self.file.close()
+
+        
 
 class MPL3115A2():
     def __init__(self, port=1, device='0x60'):
-        # To: the MPL3115A2.
+        # Device: the MPL3115A2.
         self.dev = int(device, 16)
 
         # Connects to i2c-1 by default.
@@ -84,6 +100,10 @@ class MPL3115A2():
         reg = int('0x26', 16) # Address control register 1.
         cmd = int('0x80', 16) # Set to altimeter mode.
         self.bus.write_byte_data(self.dev, reg, cmd)
+
+        # Open a data file.
+        filename = "altitude_" + str(time()) + ".txt"
+        self.file = open(filename, mode='x')
 
 
     def get(self):
@@ -121,11 +141,20 @@ class MPL3115A2():
         return num # This number should be altitude in meters.
 
 
-    def write(self):
+    def save(self):
         '''
         Save an altitude reading to a file.
         '''
+        data = self.get()
+        line = str(time()) + ',' + str(data) + '\n'
+        self.file.write(line)
 
+
+    def stop(self):
+        '''
+        Gracefully end the processes.
+        '''
+        self.file.close()
 
 
 
