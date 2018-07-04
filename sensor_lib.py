@@ -14,14 +14,14 @@ import smbus
 
 
 
-def buzzer(buzzer):
+def buzzer(buzzer_pin, beeps):
     '''
     Makes four chirps given the pin that the buzzer is attached to.
     '''
-    for i in range(4):
-        GPIO.output(buzzer, True)
+    for i in range(beeps):
+        GPIO.output(buzzer_pin, True)
         sleep(0.4)
-        GPIO.output(buzzer, False)
+        GPIO.output(buzzer_pin, False)
         sleep(0.4)
 
 

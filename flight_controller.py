@@ -28,13 +28,15 @@ alt = MPL3115A2()
 
 # Signal completion of start procedure.
 print("Startup complete.")
-buzzer(buzzer_pin)
+buzzer(buzzer_pin, 2)
 
 
 # Start the main loop.
-on = True
+pwr = True
 fly = True
-while on and fly:
+start_t = time()
+delta_t = time() - start_t
+while pwr and fly and delta_t <= 300:
     # Write sensor data to files.
     gps.save()
     alt.save()
@@ -44,20 +46,23 @@ while on and fly:
         sleep(5)
         if not GPIO.input(switch_pin):
             print("Received shutdown signal. Shutting Down.")
-            on = False
+            pwr = False
 
     # Check battery status.
     if not GPIO.input(battery_low):
         print("Battery low. Shutting down.")
-        on = False
+        pwr = False
 
     # if altitude is not changing: fly = False ## But what about the beginning?
+
+    # Calculate elapsed time.
+    delta_t = time() - start_t
 
 
 # Shutdown routine.
 gps.stop()
 alt.stop()
-buzzer(buzzer_pin)
+buzzer(buzzer_pin, 4)
 GPIO.cleanup()
 system('sudo shutdown -h now')
 
