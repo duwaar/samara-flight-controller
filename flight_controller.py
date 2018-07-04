@@ -34,14 +34,12 @@ buzzer(buzzer_pin, 2)
 # Start the main loop.
 pwr = True
 fly = True
-start_t = time()
-delta_t = time() - start_t
-while pwr and fly and delta_t <= 300:
+while pwr and fly:
     # Write sensor data to files.
     gps.save()
     alt.save()
 
-    # Check stop conditions.
+    # Check stop switch.
     if not GPIO.input(switch_pin):
         sleep(5)
         if not GPIO.input(switch_pin):
@@ -52,11 +50,6 @@ while pwr and fly and delta_t <= 300:
     if not GPIO.input(battery_low):
         print("Battery low. Shutting down.")
         pwr = False
-
-    # if altitude is not changing: fly = False ## But what about the beginning?
-
-    # Calculate elapsed time.
-    delta_t = time() - start_t
 
 
 # Shutdown routine.
