@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-#Russell Jeffery
+#Elaine Jeffery
 #14 June 2018
 
 import RPi.GPIO as GPIO
