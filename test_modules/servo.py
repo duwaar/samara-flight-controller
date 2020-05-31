@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 #Servo Driver
-#Russell Jeffery
+#Elaine Jeffery
 #15 June 2018
 
 import RPi.GPIO as GPIO
