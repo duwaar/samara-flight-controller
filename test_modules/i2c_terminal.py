@@ -32,7 +32,7 @@ class I2CTerminal():
         Display the help menu.
         '''
         print("---------------------------------------------")
-        print("Welcome to Russell's I2C bus terminal!       ")
+        print("Welcome to Elaine's I2C bus terminal!        ")
         print()
         print("After setting the device address, commands   ")
         print("should be sent separated by spaces, in       ")
