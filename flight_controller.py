@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 '''
 For collecting in-flight data from a samara-based device.
-Russell Jeffery
+Elaine Jeffery
 28 June 2018
 '''
 
