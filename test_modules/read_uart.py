@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 # Basic Serial Read
-# Russell Jeffery
+# Elaine Jeffery
 # 15 June 2018
 
 import serial
