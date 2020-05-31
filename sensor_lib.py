@@ -2,7 +2,7 @@
 
 '''
 A library of sensor utilities.
-Russell Jeffery
+Elaine Jeffery
 18 June 2018
 '''
 
